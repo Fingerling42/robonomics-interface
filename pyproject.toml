@@ -52,6 +52,16 @@ click = "^8.0.4"
 [tool.poetry.group.dev.dependencies]
 Sphinx = "^4.4.0"
 black = "^22.1.0"
+pytest = "^8.3.5"
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers --disable-plugin-autoload"
+testpaths = ["tests"]
+xfail_strict = true
+markers = [
+    "integration: read-only tests against the live Robonomics Polkadot RPC endpoint",
+    "e2e: write tests against an explicitly configured local Robonomics node",
+]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
