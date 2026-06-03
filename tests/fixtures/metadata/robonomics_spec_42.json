@@ -1,5 +1,5 @@
 {
-  "block_hash": "0x3e14ad8c32375acda8a99778c1d1a5792f40f08250fc89fbf07bbc639212a8fc",
+  "block_hash": "0x317fb685689a29612f5c095702636a345404f39dcaddba5caed7c7f58101eef6",
   "chain": "Robonomics Polkadot",
   "metadata": {
     "pallets": {
@@ -8583,7 +8583,8 @@
         "additional_signed": "scale_info::34",
         "extrinsic": "scale_info::34"
       }
-    }
+    },
+    "version": 14
   },
   "rpc_methods": [
     "account_nextIndex",

@@ -1,5 +1,3 @@
-import time
-
 import pytest
 
 HASH_A = "0x" + "ab" * 32
@@ -56,10 +54,6 @@ def event_id(event):
     return body.get("event_id") or body.get("event_name") or body.get("name")
 
 
-def event_attributes(event):
-    return _event_body(event).get("attributes", [])
-
-
 def has_event(events, module_name, event_name):
     return any(
         event_module(event) == module_name and event_id(event) == event_name
@@ -75,12 +69,3 @@ def record_payload_to_text(record_payload):
     if isinstance(record_payload, list):
         return bytes(record_payload).decode()
     return str(record_payload)
-
-
-def wait_until(predicate, timeout=30, interval=0.5):
-    deadline = time.time() + timeout
-    while time.time() < deadline:
-        if predicate():
-            return True
-        time.sleep(interval)
-    return False

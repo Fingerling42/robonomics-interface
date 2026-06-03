@@ -51,6 +51,7 @@ def _metadata_fixtures_by_spec_version():
 @pytest.mark.integration
 @pytest.mark.smoke
 def test_live_runtime_version_is_covered_by_metadata_fixture(substrate):
+    """The live runtime specVersion should have an offline metadata fixture."""
     runtime_version = substrate.get_block_runtime_version(substrate.block_hash)
 
     assert runtime_version["specVersion"] == substrate.runtime_version
@@ -61,6 +62,7 @@ def test_live_runtime_version_is_covered_by_metadata_fixture(substrate):
 @pytest.mark.integration
 @pytest.mark.smoke
 def test_live_runtime_metadata_version_matches_fixture(substrate):
+    """The live metadata format version should match the covered fixture."""
     fixtures = _metadata_fixtures_by_spec_version()
     raw_metadata = substrate.get_block_metadata(substrate.block_hash, decode=False)[
         "result"
@@ -74,6 +76,7 @@ def test_live_runtime_metadata_version_matches_fixture(substrate):
 @pytest.mark.integration
 @pytest.mark.smoke
 def test_live_rpc_methods_include_read_only_smoke_surface(substrate):
+    """The RPC should expose read-only methods needed by smoke checks."""
     rpc_methods = set(
         substrate.rpc_request("rpc_methods", []).get("result", {}).get("methods", [])
     )
@@ -100,6 +103,7 @@ def test_live_rpc_methods_include_read_only_smoke_surface(substrate):
 @pytest.mark.integration
 @pytest.mark.smoke
 def test_live_safe_storage_queries(substrate):
+    """Safe live storage reads should still have the expected shape."""
     ss58_prefix = substrate.get_constant("System", "SS58Prefix")
     datalog_window_size = substrate.get_constant("Datalog", "WindowSize")
     account = substrate.query("System", "Account", [ALICE_ADDRESS])
@@ -116,6 +120,7 @@ def test_live_safe_storage_queries(substrate):
 @pytest.mark.integration
 @pytest.mark.smoke
 def test_live_payment_query_info_for_unsigned_submission_candidate(substrate):
+    """payment_queryInfo should work for a signed but unsubmitted call."""
     call = substrate.compose_call(
         "Datalog",
         "record",

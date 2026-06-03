@@ -19,6 +19,7 @@ def metadata_fixture(request):
 
 
 def test_fixture_filename_matches_runtime_spec_version(metadata_fixture):
+    """Fixture filenames should make runtime spec-version updates explicit."""
     fixture_path = metadata_fixture["_fixture_path"]
 
     assert f"spec_{spec_version(metadata_fixture)}.json" in fixture_path
@@ -37,6 +38,7 @@ def test_fixture_filename_matches_runtime_spec_version(metadata_fixture):
     ],
 )
 def test_supported_pallets_exist(metadata_fixture, pallet_name):
+    """Every pallet used by robonomics-interface should exist in metadata."""
     assert pallet_name in pallets(metadata_fixture)
 
 
@@ -51,6 +53,7 @@ def test_supported_pallets_exist(metadata_fixture, pallet_name):
     ],
 )
 def test_supported_storage_items_exist(metadata_fixture, pallet_name, expected_storage):
+    """Wrapper chainstate queries should target storage items still in runtime."""
     assert expected_storage <= storage_names(metadata_fixture, pallet_name)
 
 
@@ -63,6 +66,7 @@ def test_supported_storage_items_exist(metadata_fixture, pallet_name, expected_s
     ],
 )
 def test_supported_constants_exist(metadata_fixture, pallet_name, expected_constants):
+    """Constants consumed by wrappers and smoke checks should remain exported."""
     assert expected_constants <= constant_names(metadata_fixture, pallet_name)
 
 
@@ -79,10 +83,12 @@ def test_supported_constants_exist(metadata_fixture, pallet_name, expected_const
     ],
 )
 def test_supported_events_exist(metadata_fixture, pallet_name, expected_events):
+    """Events consumed by Subscriber and e2e assertions should remain exported."""
     assert expected_events <= event_names(metadata_fixture, pallet_name)
 
 
 def test_datalog_window_size_constant_is_exported(metadata_fixture):
+    """Datalog.WindowSize should be present and carry a concrete value."""
     constants = metadata_fixture["metadata"]["pallets"]["Datalog"]["constants"]
     window_size = [
         constant
@@ -96,10 +102,12 @@ def test_datalog_window_size_constant_is_exported(metadata_fixture):
 
 
 def test_balances_transfer_allow_death_call_exists(metadata_fixture):
+    """Balances.transfer_allow_death is the current transfer call to wrap."""
     assert "transfer_allow_death" in call_names(metadata_fixture, "Balances")
 
 
 def test_supported_calls_are_present(metadata_fixture):
+    """Every supported wrapper extrinsic should be present in runtime metadata."""
     missing = {
         (pallet_name, call_name)
         for pallet_name, call_name in SUPPORTED_CALLS
@@ -110,10 +118,12 @@ def test_supported_calls_are_present(metadata_fixture):
 
 
 def test_check_metadata_hash_signed_extension_exists(metadata_fixture):
+    """Signed payload checks should track the CheckMetadataHash extension."""
     assert "CheckMetadataHash" in signed_extensions(metadata_fixture)
 
 
 def test_removed_runtime_surfaces_are_absent(metadata_fixture):
+    """Removed pubsub/p2p/Subscription/CPS surfaces should stay absent."""
     assert "Subscription" not in pallets(metadata_fixture)
     assert "CPS" not in pallets(metadata_fixture)
 

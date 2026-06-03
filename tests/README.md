@@ -6,6 +6,9 @@ The default test run is offline:
 poetry run pytest
 ```
 
+Pytest plugin autoloading is disabled in `pyproject.toml` so globally
+installed plugins cannot affect the project test suite.
+
 Read-only checks against the live Robonomics Polkadot RPC endpoint must be
 marked with `@pytest.mark.integration` and enabled explicitly:
 
@@ -59,6 +62,18 @@ Run the same local-node suite after the Docker node starts:
 ```bash
 ROBONOMICS_E2E_RPC_URL=ws://127.0.0.1:9944 poetry run pytest --run-e2e tests/e2e
 ```
+
+E2E tests are intentionally kept out of the default GitHub Actions flow until
+CI has a reliable current-node artifact. The Docker `latest` image should not
+be used for required e2e CI while it lags behind the runtime covered by the
+metadata fixtures.
+
+Expected local e2e caveats:
+
+- `DigitalTwin.remove_source` is an expected xfail until the Python wrapper is
+  implemented.
+- legacy `RWS.call` is skipped when the local dev genesis does not provide an
+  RWS subscription for the test account.
 
 By default, e2e tests use `//Alice` and `//Bob`. Override them with
 `ROBONOMICS_E2E_ALICE_SEED` and `ROBONOMICS_E2E_BOB_SEED` if a custom local
