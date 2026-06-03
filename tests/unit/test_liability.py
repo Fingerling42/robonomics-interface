@@ -9,6 +9,7 @@ PAYLOAD_HASH = "0x" + "ab" * 32
 
 
 def test_sign_liability_returns_verifiable_signature(account):
+    """sign_liability signs the SCALE payload hash and compact price."""
     liability = Liability(account)
     encoded_payload = str_to_scalebytes(PAYLOAD_HASH, "H256") + str_to_scalebytes(
         42, "Compact<Balance>"
@@ -39,6 +40,7 @@ def test_sign_liability_requires_private_key():
 
 
 def test_sign_report_returns_verifiable_signature(account):
+    """sign_report signs the SCALE liability index and payload hash."""
     liability = Liability(account)
     encoded_payload = str_to_scalebytes(7, "U32") + str_to_scalebytes(
         PAYLOAD_HASH, "H256"

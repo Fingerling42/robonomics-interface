@@ -44,4 +44,5 @@ def test_account_without_seed_has_no_address():
     reason="Account dataclass declares no fields, so all instances compare equal"
 )
 def test_accounts_with_different_keys_are_not_equal():
+    """Accounts should compare by meaningful state, not as empty dataclasses."""
     assert Account(seed="//Alice") != Account(seed="//Bob")

@@ -49,6 +49,7 @@ def test_get_days_left_rounds_partial_day_up(
 def test_get_days_left_does_not_overcount_exact_day(
     account, service_functions_mock, monkeypatch
 ):
+    """An exact whole day remaining should not be rounded into two days."""
     ledger = {"issue_time": NOW_MS, "kind": {"Daily": {"days": 1}}}
     rws = _rws_with_ledger(account, service_functions_mock, monkeypatch, ledger)
 
@@ -61,6 +62,7 @@ def test_get_days_left_does_not_overcount_exact_day(
 def test_get_days_left_returns_false_at_expiration(
     account, service_functions_mock, monkeypatch
 ):
+    """A subscription ending now should already be considered inactive."""
     ledger = {"issue_time": NOW_MS - DAY_MS, "kind": {"Daily": {"days": 1}}}
     rws = _rws_with_ledger(account, service_functions_mock, monkeypatch, ledger)
 

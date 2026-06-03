@@ -40,6 +40,7 @@ def test_str_to_scalebytes_encodes_supported_values(value, type_str, expected):
 
 
 def test_web_3_auth_returns_verifiable_signature():
+    """web_3_auth signs the account address and returns the sub-* login."""
     login, signature = web_3_auth("//Alice")
     keypair = create_keypair("//Alice")
 

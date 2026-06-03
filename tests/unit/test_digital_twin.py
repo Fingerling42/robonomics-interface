@@ -20,6 +20,7 @@ def test_process_topic_hashes_short_hex_string():
 
 @pytest.mark.xfail(reason="A ready topic hash should require the 0x prefix")
 def test_process_topic_hashes_unprefixed_66_character_hex_string():
+    """Only 0x-prefixed 32-byte hex strings should bypass topic hashing."""
     topic = "ab" * 33
 
     assert DigitalTwin._process_topic(topic) == dt_encode_topic(topic)
