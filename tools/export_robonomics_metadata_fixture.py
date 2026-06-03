@@ -226,6 +226,12 @@ def resolve_output_path(args, spec_version):
     return Path(args.output_dir) / f"robonomics_spec_{spec_version}.json"
 
 
+def metadata_version(raw_metadata):
+    if not raw_metadata.startswith("0x6d657461"):
+        raise ValueError("Unexpected runtime metadata prefix")
+    return int(raw_metadata[10:12], 16)
+
+
 def json_safe(value):
     if value is None or isinstance(value, (str, int, float, bool)):
         return value
@@ -291,6 +297,7 @@ def main():
         .get("methods", []),
         "metadata": {
             "raw": raw_metadata,
+            "version": metadata_version(raw_metadata),
             "signed_extensions": signed_extensions,
             "pallets": group_metadata(substrate),
         },

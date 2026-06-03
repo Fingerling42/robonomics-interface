@@ -69,6 +69,17 @@ def spec_version(fixture):
     return runtime_version(fixture).get("specVersion")
 
 
+def metadata_version(fixture):
+    exported_version = fixture.get("metadata", {}).get("version")
+    if exported_version is not None:
+        return exported_version
+
+    raw_metadata = fixture.get("metadata", {}).get("raw", "")
+    if not raw_metadata.startswith("0x6d657461"):
+        pytest.fail("Unexpected runtime metadata prefix in fixture")
+    return int(raw_metadata[10:12], 16)
+
+
 def pallets(fixture):
     return fixture.get("metadata", {}).get("pallets", {})
 

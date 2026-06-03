@@ -1,0 +1,44 @@
+name: Polkadot RPC Smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      rpc_url:
+        description: Optional Robonomics Polkadot RPC URL override
+        required: false
+        type: string
+  schedule:
+    - cron: "17 3 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: polkadot-rpc-smoke
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.9
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        installer-parallel: true
+    - name: Install dependencies
+      run: poetry install --no-interaction
+    - name: Run read-only Polkadot RPC smoke tests
+      env:
+        ROBONOMICS_RPC_URL: ${{ inputs.rpc_url || vars.ROBONOMICS_RPC_URL }}
+      run: poetry run pytest --run-integration -m "integration and smoke" tests/integration

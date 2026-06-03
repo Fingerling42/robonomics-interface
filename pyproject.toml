@@ -60,6 +60,7 @@ testpaths = ["tests"]
 xfail_strict = true
 markers = [
     "integration: read-only tests against the live Robonomics Polkadot RPC endpoint",
+    "smoke: minimal live RPC checks for scheduled CI",
     "e2e: write tests against an explicitly configured local Robonomics node",
 ]
 
