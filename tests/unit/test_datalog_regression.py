@@ -27,9 +27,7 @@ def test_get_item_index_zero_does_not_read_latest_index(
     )
 
 
-def test_get_item_latest_returns_none_when_end_is_zero(
-    account, service_functions_mock
-):
+def test_get_item_latest_returns_none_when_end_is_zero(account, service_functions_mock):
     """An empty Datalog index must not query DatalogItem[-1]."""
     datalog = _datalog(account, service_functions_mock)
     service_functions_mock.chainstate_query.return_value = {"start": 0, "end": 0}

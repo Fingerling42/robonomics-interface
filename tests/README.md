@@ -31,3 +31,37 @@ Keep tests in these groups:
 - `integration/`: read-only live Polkadot RPC smoke tests.
 - `e2e/`: local-node write workflows.
 - `fixtures/`: runtime metadata and stable test payloads.
+
+## Runtime metadata fixtures
+
+Contract tests under `tests/contract/` run against every fixture matching:
+
+```bash
+tests/fixtures/metadata/robonomics_spec_*.json
+```
+
+Export the currently live runtime metadata with:
+
+```bash
+poetry run python tools/export_robonomics_metadata_fixture.py
+```
+
+Export an expected runtime version, failing if the connected block has a
+different `specVersion`:
+
+```bash
+poetry run python tools/export_robonomics_metadata_fixture.py --spec-version 42
+```
+
+When the live runtime has moved on, pass a historical block:
+
+```bash
+poetry run python tools/export_robonomics_metadata_fixture.py --spec-version 42 --block-hash 0x...
+```
+
+To validate a freshly exported fixture without copying it into the repository:
+
+```bash
+poetry run python tools/export_robonomics_metadata_fixture.py --output-dir /tmp/robonomics-metadata
+ROBONOMICS_METADATA_FIXTURE_DIR=/tmp/robonomics-metadata poetry run pytest tests/contract
+```

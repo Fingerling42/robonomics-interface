@@ -22,9 +22,7 @@ def _subscriber(
     return subscriber
 
 
-@pytest.mark.xfail(
-    reason="Subscriber should read System.Events from the event block"
-)
+@pytest.mark.xfail(reason="Subscriber should read System.Events from the event block")
 def test_event_callback_queries_events_at_header_block_hash():
     """The callback must not mix a header update with latest System.Events."""
     subscriber = _subscriber()
