@@ -1,7 +1,9 @@
 import pytest
+from substrateinterface.utils.ss58 import ss58_decode
 
 HASH_A = "0x" + "ab" * 32
 HASH_B = "0x" + "cd" * 32
+RWS_E2E_TPS = 1_000_000
 LOCAL_DEV_CHAIN_NAMES = {
     "Development",
     "Robonomics Local Development",
@@ -23,6 +25,14 @@ def has_runtime_call(substrate, module_name, call_name):
 def require_runtime_call(substrate, module_name, call_name):
     if not has_runtime_call(substrate, module_name, call_name):
         pytest.skip(f"Local runtime does not expose {module_name}.{call_name}")
+
+
+def assert_successful_receipt(receipt):
+    assert receipt.is_success, receipt.error_message
+
+
+def account_id_call_param(address):
+    return [f"0x{ss58_decode(address, valid_ss58_format=32)}"]
 
 
 def block_number_from_result(extrinsic_result):

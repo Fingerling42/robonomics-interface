@@ -13,18 +13,16 @@ from robonomicsinterface.classes.rws import RWS
 
 
 @pytest.mark.e2e
-def test_rws_legacy_call_records_datalog_when_subscription_exists(
+def test_rws_set_devices_wrapper_encodes_current_runtime_devices(
     e2e_substrate,
     e2e_alice,
     e2e_bob,
+    e2e_rws_subscription,
 ):
-    """Exercise legacy RWS.call only when the local genesis has a subscription."""
+    """Document current wrapper encoding for RWS.set_devices."""
     require_runtime_call(e2e_substrate, "RWS", "set_devices")
-    require_runtime_call(e2e_substrate, "RWS", "call")
-    require_runtime_call(e2e_substrate, "Datalog", "record")
     rws_owner = RWS(e2e_alice, wait_for_inclusion=True, return_block_num=True)
-    if not rws_owner.get_ledger():
-        pytest.skip("Local dev genesis does not provide an Alice RWS subscription")
+    assert rws_owner.get_ledger() == e2e_rws_subscription
 
     try:
         set_devices_result = rws_owner.set_devices([e2e_bob.get_address()])
@@ -36,6 +34,19 @@ def test_rws_legacy_call_records_datalog_when_subscription_exists(
         "NewDevices",
     )
 
+
+@pytest.mark.e2e
+def test_rws_legacy_call_records_datalog_with_prepared_device(
+    e2e_substrate,
+    e2e_alice,
+    e2e_bob,
+    e2e_rws_device,
+):
+    """Use legacy RWS.call for Datalog after preparing devices directly."""
+    require_runtime_call(e2e_substrate, "RWS", "call")
+    require_runtime_call(e2e_substrate, "Datalog", "record")
+    assert e2e_bob.get_address() in e2e_rws_device
+
     payload = f"rws-e2e-{uuid.uuid4()}"
     datalog_via_rws = Datalog(
         e2e_bob,
@@ -44,11 +55,16 @@ def test_rws_legacy_call_records_datalog_when_subscription_exists(
         rws_sub_owner=e2e_alice.get_address(),
     )
     try:
-        datalog_via_rws.record(payload)
+        record_result = datalog_via_rws.record(payload)
     except Exception as exc:
         pytest.xfail(
             f"RWS.call legacy wrapper is not usable on this dev runtime: {exc}"
         )
+    assert has_event(
+        events_from_result(e2e_substrate, record_result),
+        "RWS",
+        "NewCall",
+    )
 
     latest = Datalog(e2e_bob).get_item()
     assert latest is not None

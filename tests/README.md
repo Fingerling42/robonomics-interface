@@ -72,8 +72,10 @@ Expected local e2e caveats:
 
 - `DigitalTwin.remove_source` is an expected xfail until the Python wrapper is
   implemented.
-- legacy `RWS.call` is skipped when the local dev genesis does not provide an
-  RWS subscription for the test account.
+- `RWS.set_devices` is an expected xfail until the wrapper encodes the current
+  `BoundedVec<AccountId>` shape.
+- legacy `RWS.call` creates a local RWS subscription and prepares devices
+  during setup. It requires Alice to be the local dev sudo key.
 
 By default, e2e tests use `//Alice` and `//Bob`. Override them with
 `ROBONOMICS_E2E_ALICE_SEED` and `ROBONOMICS_E2E_BOB_SEED` if a custom local
