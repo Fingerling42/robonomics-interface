@@ -6,10 +6,6 @@ The default test run is offline:
 poetry run pytest
 ```
 
-Disabling plugin autoload keeps the suite isolated from unrelated pytest
-plugins installed globally on a developer machine. It is configured for the
-project in `pyproject.toml`.
-
 Read-only checks against the live Robonomics Polkadot RPC endpoint must be
 marked with `@pytest.mark.integration` and enabled explicitly:
 
@@ -23,6 +19,50 @@ use `@pytest.mark.e2e`, and be enabled explicitly:
 ```bash
 poetry run pytest --run-e2e -m e2e
 ```
+
+The preferred way to start a local Robonomics dev node is a release binary
+matching the runtime version under test. For example, Robonomics `v4.2.0`
+matches runtime `specVersion=42`:
+
+```bash
+mkdir -p ~/RobonomicsProjects/bin/robonomics-v4.2.0
+cd ~/RobonomicsProjects/bin/robonomics-v4.2.0
+wget https://github.com/airalab/robonomics/releases/download/v4.2.0/robonomics-v4.2.0-ubuntu-x86_64.tar.gz
+tar -xzf robonomics-v4.2.0-ubuntu-x86_64.tar.gz
+chmod +x robonomics
+./robonomics --dev --tmp --rpc-external
+```
+
+Then run the local-node suite from this repository:
+
+```bash
+ROBONOMICS_E2E_RPC_URL=ws://127.0.0.1:9944 poetry run pytest --run-e2e tests/e2e
+```
+
+Docker can also be used as a fallback, but the published `latest` image may
+lag behind the live runtime. The current Docker runtime image needs the binary
+name before node flags:
+
+```bash
+docker run --rm \
+  --name robonomics-dev \
+  -p 9944:9944 \
+  robonomics/robonomics:latest \
+  /usr/local/bin/robonomics \
+  --dev \
+  --tmp \
+  --rpc-external
+```
+
+Run the same local-node suite after the Docker node starts:
+
+```bash
+ROBONOMICS_E2E_RPC_URL=ws://127.0.0.1:9944 poetry run pytest --run-e2e tests/e2e
+```
+
+By default, e2e tests use `//Alice` and `//Bob`. Override them with
+`ROBONOMICS_E2E_ALICE_SEED` and `ROBONOMICS_E2E_BOB_SEED` if a custom local
+genesis needs different funded accounts.
 
 Keep tests in these groups:
 
