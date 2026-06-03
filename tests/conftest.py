@@ -25,7 +25,9 @@ def pytest_addoption(parser):
 def pytest_collection_modifyitems(config, items):
     run_integration = config.getoption("--run-integration")
     run_e2e = config.getoption("--run-e2e")
-    skip_integration = pytest.mark.skip(reason="use --run-integration to enable live RPC tests")
+    skip_integration = pytest.mark.skip(
+        reason="use --run-integration to enable live RPC tests"
+    )
     skip_e2e = pytest.mark.skip(reason="use --run-e2e to enable local-node write tests")
 
     for item in items:
