@@ -4,6 +4,13 @@
 name: Build and Publish Package
 
 on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish to PyPI and create a GitHub release
+        required: false
+        default: false
+        type: boolean
   push:
     branches: [ main ]
 
@@ -38,6 +45,7 @@ jobs:
         poetry --version
         poetry build
     - name: Publish package
+      if: github.event_name != 'workflow_dispatch' || inputs.publish
       run: |
         poetry publish -u "__token__" -p ${{ secrets.PYPI_API_TOKEN }}
 
@@ -49,6 +57,7 @@ jobs:
         echo "version=$(poetry version --short)" >> "$GITHUB_OUTPUT"
 
     - name: Release With Assets
+      if: github.event_name != 'workflow_dispatch' || inputs.publish
       uses: softprops/action-gh-release@v2
       with:
         name: ${{ steps.get_version.outputs.name }}

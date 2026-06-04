@@ -4,6 +4,13 @@
 name: Publish Docs
 
 on:
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy built docs to gh-pages
+        required: false
+        default: false
+        type: boolean
   push:
     branches: [ main ]
 
@@ -36,6 +43,7 @@ jobs:
         cd docs
         poetry run make html
     - name: Deploy
+      if: github.event_name != 'workflow_dispatch' || inputs.deploy
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
