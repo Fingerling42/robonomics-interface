@@ -4,13 +4,30 @@ from logging import getLogger
 from scalecodec.types import GenericCall, GenericExtrinsic
 from substrateinterface import Keypair, SubstrateInterface, ExtrinsicReceipt
 from substrateinterface.exceptions import ExtrinsicFailedException
+from websocket._exceptions import WebSocketConnectionClosedException
 
 from .account import Account
 from ..decorators import check_socket_opened
-from ..exceptions import NoPrivateKeyException
+from ..exceptions import AmbiguousExtrinsicSubmissionException, NoPrivateKeyException
 from ..types import QueryParams, TypeRegistryTyping, RWSParamsTyping
 
 logger = getLogger(__name__)
+
+
+def _extract_extrinsic_hash(extrinsic: GenericExtrinsic) -> tp.Optional[str]:
+    for attr_name in ("extrinsic_hash", "hash"):
+        try:
+            value = getattr(extrinsic, attr_name, None)
+        except Exception:
+            continue
+        if callable(value):
+            try:
+                value = value()
+            except Exception:
+                continue
+        if isinstance(value, str):
+            return value
+    return None
 
 
 class ServiceFunctions:
@@ -79,7 +96,7 @@ class ServiceFunctions:
             subscription_handler=subscription_handler,
         ).value
 
-    @check_socket_opened
+    @check_socket_opened(retry=False)
     def extrinsic(
         self,
         call_module: str,
@@ -135,9 +152,17 @@ class ServiceFunctions:
         )
 
         logger.info("Submitting extrinsic")
-        receipt: ExtrinsicReceipt = self.interface.submit_extrinsic(
-            extrinsic, wait_for_inclusion=self.wait_for_inclusion
-        )
+        try:
+            receipt: ExtrinsicReceipt = self.interface.submit_extrinsic(
+                extrinsic, wait_for_inclusion=self.wait_for_inclusion
+            )
+        except (BrokenPipeError, WebSocketConnectionClosedException) as exc:
+            extrinsic_hash = _extract_extrinsic_hash(extrinsic)
+            raise AmbiguousExtrinsicSubmissionException(
+                "Connection was lost after extrinsic submission. The extrinsic "
+                "may have reached the node and was not submitted again.",
+                extrinsic_hash=extrinsic_hash,
+            ) from exc
 
         logger.info(f"Extrinsic {receipt.extrinsic_hash} for RPC {call_module}:{call_function} submitted.")
 

@@ -23,3 +23,16 @@ class InvalidExtrinsicHash(Exception):
     """
 
     pass
+
+
+class AmbiguousExtrinsicSubmissionException(Exception):
+    """
+    The node connection was lost after submitting an extrinsic.
+
+    The transaction may have reached the node, so the library must not submit it
+    again automatically.
+    """
+
+    def __init__(self, message: str, extrinsic_hash=None):
+        self.extrinsic_hash = extrinsic_hash
+        super().__init__(message)
