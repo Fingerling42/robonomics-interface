@@ -42,6 +42,10 @@ Then run the local-node suite from this repository:
 ROBONOMICS_E2E_RPC_URL=ws://127.0.0.1:9944 poetry run pytest --run-e2e tests/e2e
 ```
 
+E2E write tests accept loopback RPC URLs by default (`127.0.0.1`, `localhost`,
+or `::1`). To run them against a remote dev node, set
+`ROBONOMICS_E2E_ALLOW_REMOTE=1` explicitly.
+
 Docker can also be used as a fallback, but the published `latest` image may
 lag behind the live runtime. The current Docker runtime image needs the binary
 name before node flags:

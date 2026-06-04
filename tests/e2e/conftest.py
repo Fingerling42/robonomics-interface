@@ -1,4 +1,5 @@
 import os
+from urllib.parse import urlparse
 
 import pytest
 from helpers import (
@@ -14,11 +15,23 @@ from robonomicsinterface.classes.account import Account
 from robonomicsinterface.constants import TYPE_REGISTRY
 
 DEFAULT_E2E_RPC_URL = "ws://127.0.0.1:9944"
+LOCAL_E2E_HOSTS = {"127.0.0.1", "localhost", "::1"}
+
+
+def _is_local_e2e_url(rpc_url):
+    return urlparse(rpc_url).hostname in LOCAL_E2E_HOSTS
 
 
 @pytest.fixture(scope="session")
 def e2e_rpc_url():
-    return os.environ.get("ROBONOMICS_E2E_RPC_URL", DEFAULT_E2E_RPC_URL)
+    rpc_url = os.environ.get("ROBONOMICS_E2E_RPC_URL", DEFAULT_E2E_RPC_URL)
+    allow_remote = os.environ.get("ROBONOMICS_E2E_ALLOW_REMOTE") == "1"
+    if not _is_local_e2e_url(rpc_url) and not allow_remote:
+        pytest.skip(
+            "Local-node write tests require a loopback RPC URL. Set "
+            "ROBONOMICS_E2E_ALLOW_REMOTE=1 to opt in to a remote dev node."
+        )
+    return rpc_url
 
 
 @pytest.fixture(scope="session")
