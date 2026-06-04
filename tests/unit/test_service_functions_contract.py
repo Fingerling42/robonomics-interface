@@ -90,6 +90,14 @@ def test_get_constant_returns_runtime_constant_value(account, substrate_interfac
     )
 
 
+def test_get_block_hash_delegates_to_interface(account, substrate_interface_mock):
+    substrate_interface_mock.get_block_hash.return_value = "0xblock"
+    service = _service(account, substrate_interface_mock)
+
+    assert service.get_block_hash(42) == "0xblock"
+    substrate_interface_mock.get_block_hash.assert_called_once_with(42)
+
+
 def test_rpc_request_delegates_to_interface(account, substrate_interface_mock):
     substrate_interface_mock.rpc_request.return_value = {"result": 7}
     service = _service(account, substrate_interface_mock)

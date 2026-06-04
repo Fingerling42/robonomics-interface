@@ -22,7 +22,6 @@ def _subscriber(
     return subscriber
 
 
-@pytest.mark.xfail(reason="Subscriber should read System.Events from the event block")
 def test_event_callback_queries_events_at_header_block_hash():
     """The callback must not mix a header update with latest System.Events."""
     subscriber = _subscriber()
@@ -34,6 +33,26 @@ def test_event_callback_queries_events_at_header_block_hash():
         subscription_id=1,
     )
 
+    subscriber._custom_functions.chainstate_query.assert_called_once_with(
+        "System",
+        "Events",
+        block_hash="0xblock",
+    )
+
+
+def test_event_callback_fetches_block_hash_when_header_has_only_number():
+    """Header callbacks without hash should still query events at that block."""
+    subscriber = _subscriber()
+    subscriber._custom_functions.get_block_hash.return_value = "0xblock"
+    subscriber._custom_functions.chainstate_query.return_value = []
+
+    subscriber._event_callback(
+        {"header": {"number": "0x2a"}},
+        update_nr=1,
+        subscription_id=1,
+    )
+
+    subscriber._custom_functions.get_block_hash.assert_called_once_with(42)
     subscriber._custom_functions.chainstate_query.assert_called_once_with(
         "System",
         "Events",

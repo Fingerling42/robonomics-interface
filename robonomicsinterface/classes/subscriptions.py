@@ -101,7 +101,10 @@ class Subscriber:
         if self._cancel_flag:
             return True
 
-        chain_events: list = self._custom_functions.chainstate_query("System", "Events")
+        block_hash = self._event_block_hash(index_obj)
+        chain_events: list = self._custom_functions.chainstate_query(
+            "System", "Events", block_hash=block_hash
+        )
         for event in chain_events:
 
             if event["event_id"] in self._subscribed_event:
@@ -112,6 +115,17 @@ class Subscriber:
                 if self._pass_event_id:
                     callback = partial(callback, f"{index_obj['header']['number']}-{event['extrinsic_idx']}")
                 callback()
+
+    def _event_block_hash(self, index_obj: tp.Any) -> str:
+        header = index_obj["header"]
+        block_hash = header.get("hash")
+        if block_hash:
+            return block_hash
+
+        block_number = header["number"]
+        if isinstance(block_number, str) and block_number.startswith("0x"):
+            block_number = int(block_number, 16)
+        return self._custom_functions.get_block_hash(block_number)
 
     def _target_address_in_event(self, event) -> bool:
         """

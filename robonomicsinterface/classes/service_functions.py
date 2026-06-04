@@ -121,6 +121,18 @@ class ServiceFunctions:
         )
         return constant.value if constant is not None else None
 
+    @check_socket_opened
+    def get_block_hash(self, block_number: int) -> str:
+        """
+        Get block hash by its number.
+
+        :param block_number: Block number.
+
+        :return: Block hash.
+        """
+
+        return self.interface.get_block_hash(block_number)
+
     @check_socket_opened(retry=False)
     def extrinsic(
         self,
