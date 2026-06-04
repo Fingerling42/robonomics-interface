@@ -16,9 +16,17 @@ class DigitalTwinMapException(Exception):
     pass
 
 
-class InvalidExtrinsicHash(Exception):
+class InvalidHash(Exception):
     """
-    Invalid extrinsic hash format. Hash length is not 66 signs, or it doesn't start from 0x.
+    Invalid 32-byte hex hash format.
+    """
+
+    pass
+
+
+class InvalidExtrinsicHash(InvalidHash):
+    """
+    Invalid extrinsic hash format.
 
     """
 

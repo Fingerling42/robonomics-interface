@@ -72,8 +72,12 @@ class ChainUtils:
 
         """
 
-        if not data_hash.startswith("0x") or not len(data_hash) == 66:
-            raise InvalidExtrinsicHash("Not a valid extrinsic has passed")
+        if not isinstance(data_hash, str) or not data_hash.startswith("0x") or len(data_hash) != 66:
+            raise InvalidExtrinsicHash("Hash must be a 0x-prefixed 32-byte hex string")
+        try:
+            bytes.fromhex(data_hash[2:])
+        except ValueError as exc:
+            raise InvalidExtrinsicHash("Hash must be a 0x-prefixed 32-byte hex string") from exc
 
     @check_socket_opened
     def get_extrinsic_in_block(

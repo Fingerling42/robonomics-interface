@@ -11,7 +11,24 @@ from robonomicsinterface.utils import (
 PAYLOAD_HASH = "0x" + "ab" * 32
 
 
-@pytest.mark.xfail(reason="Hash validation should reject non-hex payloads")
+def test_hash_validation_accepts_32_byte_hex_hash():
+    ChainUtils._check_hash_valid("0x" + "aB" * 32)
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "ab" * 32,
+        "0x" + "ab" * 31,
+        "0x" + "ab" * 33,
+        None,
+    ],
+)
+def test_hash_validation_rejects_wrong_hash_shape(value):
+    with pytest.raises(InvalidExtrinsicHash):
+        ChainUtils._check_hash_valid(value)
+
+
 def test_hash_validation_rejects_non_hex_hash():
     """A 66-character string is not enough; the payload must be hex."""
     with pytest.raises(InvalidExtrinsicHash):
