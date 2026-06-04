@@ -96,6 +96,31 @@ class ServiceFunctions:
             subscription_handler=subscription_handler,
         ).value
 
+    @check_socket_opened
+    def get_constant(
+        self,
+        module_name: str,
+        constant_name: str,
+        block_hash: tp.Optional[str] = None,
+    ) -> tp.Any:
+        """
+        Get runtime constant value from metadata.
+
+        :param module_name: Runtime module/pallet name.
+        :param constant_name: Runtime constant name.
+        :param block_hash: Retrieves metadata constant as of passed block hash.
+
+        :return: Constant value.
+        """
+
+        logger.info(f"Fetching runtime constant {module_name}.{constant_name}")
+        constant = self.interface.get_constant(
+            module_name,
+            constant_name,
+            block_hash=block_hash,
+        )
+        return constant.value if constant is not None else None
+
     @check_socket_opened(retry=False)
     def extrinsic(
         self,
