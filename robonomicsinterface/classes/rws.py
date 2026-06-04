@@ -1,3 +1,4 @@
+import math
 import time
 import typing as tp
 
@@ -117,8 +118,8 @@ class RWS(BaseClass):
             return -1
         unix_time_sub_expire: int = ledger["issue_time"] + 86400 * 1000 * ledger["kind"]["Daily"]["days"]
         days_left: float = (unix_time_sub_expire - time.time() * 1000) / 86400000
-        if days_left >= 0:
-            return int(days_left)+1
+        if days_left > 0:
+            return math.ceil(days_left)
         else:
             return False
 
