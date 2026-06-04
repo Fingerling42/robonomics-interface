@@ -11,9 +11,6 @@ def _common(account, service_functions):
     return common
 
 
-@pytest.mark.xfail(
-    reason="Current runtime exposes Balances.transfer_allow_death, not Balances.transfer"
-)
 def test_transfer_tokens_uses_transfer_allow_death(account, service_functions_mock):
     """Regression guard for the Polkadot Balances transfer call name."""
     common = _common(account, service_functions_mock)

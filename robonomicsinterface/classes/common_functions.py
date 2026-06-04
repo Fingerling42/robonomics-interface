@@ -71,7 +71,7 @@ class CommonFunctions(BaseClass):
 
         return self._service_functions.extrinsic(
             "Balances",
-            "transfer",
+            "transfer_allow_death",
             {"dest": {"Id": target_address}, "value": tokens},
             nonce,
         )

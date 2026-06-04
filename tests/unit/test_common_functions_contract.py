@@ -1,5 +1,3 @@
-import pytest
-
 from robonomicsinterface.classes.common_functions import CommonFunctions
 
 ALICE_ADDRESS = "4GzMLepDF5nKTWDM6XpB3CrBcFmwgazcVFAD3ZBNAjKT6hQJ"
@@ -38,9 +36,6 @@ def test_get_account_nonce_uses_system_account_next_index(
     )
 
 
-@pytest.mark.xfail(
-    reason="Current runtime exposes Balances.transfer_allow_death, not Balances.transfer"
-)
 def test_transfer_tokens_uses_current_runtime_transfer_call(
     account, service_functions_mock
 ):
