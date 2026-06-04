@@ -25,6 +25,14 @@ class InvalidExtrinsicHash(Exception):
     pass
 
 
+class InvalidExtrinsicIndex(Exception):
+    """
+    Invalid extrinsic index for block lookup.
+    """
+
+    pass
+
+
 class AmbiguousExtrinsicSubmissionException(Exception):
     """
     The node connection was lost after submitting an extrinsic.
