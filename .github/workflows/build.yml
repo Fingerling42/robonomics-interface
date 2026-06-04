@@ -9,15 +9,20 @@ on:
   pull_request:
     branches: [ development ]
 
+permissions:
+  contents: read
+
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
     - name: Set up Python 3.9
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: 3.9
     - name: Install Poetry
@@ -27,7 +32,7 @@ jobs:
         virtualenvs-in-project: true
         installer-parallel: true
     - name: Install dependencies
-      run: poetry install
+      run: poetry install --no-interaction
     - name: Run offline tests
       run: poetry run pytest
     - name: Build package
