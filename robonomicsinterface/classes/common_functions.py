@@ -3,6 +3,7 @@ import typing as tp
 from logging import getLogger
 
 from .base import BaseClass
+from ..exceptions import RPCRequestException
 from ..types import AccountTyping
 
 logger = getLogger(__name__)
@@ -47,9 +48,19 @@ class CommonFunctions(BaseClass):
 
         logger.info(f"Fetching nonce of account {account_address}")
 
-        return self._service_functions.rpc_request(
+        response = self._service_functions.rpc_request(
             "system_accountNextIndex", [account_address], result_handler=None
-        ).get("result", 0)
+        )
+        if "error" in response:
+            raise RPCRequestException(
+                "Failed to fetch account nonce from system_accountNextIndex",
+                error=response["error"],
+            )
+        if "result" not in response:
+            raise RPCRequestException(
+                "Malformed system_accountNextIndex response: missing result"
+            )
+        return response["result"]
 
     def transfer_tokens(self, target_address: str, tokens: int, nonce: tp.Optional[int] = None) -> str:
         """

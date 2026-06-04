@@ -33,6 +33,16 @@ class InvalidExtrinsicIndex(Exception):
     pass
 
 
+class RPCRequestException(Exception):
+    """
+    RPC request returned an error or malformed response.
+    """
+
+    def __init__(self, message: str, error=None):
+        self.error = error
+        super().__init__(message)
+
+
 class AmbiguousExtrinsicSubmissionException(Exception):
     """
     The node connection was lost after submitting an extrinsic.
