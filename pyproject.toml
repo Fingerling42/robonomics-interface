@@ -55,7 +55,7 @@ black = "^22.1.0"
 pytest = "^8.3.5"
 
 [tool.pytest.ini_options]
-addopts = "-ra --strict-markers --disable-plugin-autoload"
+addopts = "-ra --strict-markers"
 testpaths = ["tests"]
 xfail_strict = true
 markers = [

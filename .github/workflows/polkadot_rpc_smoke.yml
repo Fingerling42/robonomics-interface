@@ -1,17 +1,14 @@
 name: Polkadot RPC Smoke
 
 on:
-  workflow_dispatch:
-    inputs:
-      rpc_url:
-        description: Optional Robonomics Polkadot RPC URL override
-        required: false
-        type: string
   schedule:
     - cron: "20 4 1 * *"
 
 permissions:
   contents: read
+
+env:
+  PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
 
 concurrency:
   group: polkadot-rpc-smoke
@@ -33,6 +30,7 @@ jobs:
     - name: Install Poetry
       uses: snok/install-poetry@v1
       with:
+        version: 1.8.5
         virtualenvs-create: true
         virtualenvs-in-project: true
         installer-parallel: true
@@ -40,5 +38,5 @@ jobs:
       run: poetry install --no-interaction
     - name: Run read-only Polkadot RPC smoke tests
       env:
-        ROBONOMICS_RPC_URL: ${{ inputs.rpc_url || vars.ROBONOMICS_RPC_URL }}
+        ROBONOMICS_RPC_URL: ${{ vars.ROBONOMICS_RPC_URL }}
       run: poetry run pytest --run-integration -m "integration and smoke" tests/integration
