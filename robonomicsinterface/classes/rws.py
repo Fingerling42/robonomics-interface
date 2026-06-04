@@ -144,10 +144,7 @@ class RWS(BaseClass):
             "RWS", "Devices", sub_owner_addr, block_hash=block_hash
         )
 
-        if address in devices:
-            return True
-        else:
-            return False
+        return address in (devices or [])
 
     def bid(self, index: int, amount: int) -> str:
         """
