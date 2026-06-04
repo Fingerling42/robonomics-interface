@@ -18,14 +18,12 @@ def test_hash_validation_rejects_non_hex_hash():
         ChainUtils._check_hash_valid("0x" + "zz" * 32)
 
 
-@pytest.mark.xfail(reason="IPFS conversion should enforce exactly 32 input bytes")
 def test_ipfs_32_bytes_to_qm_hash_rejects_wrong_digest_length():
     """A digest with 31 bytes must not be accepted as a valid content hash."""
     with pytest.raises(ValueError):
         ipfs_32_bytes_to_qm_hash("0x" + "ab" * 31)
 
 
-@pytest.mark.xfail(reason="IPFS conversion should validate CID prefix and length")
 def test_ipfs_qm_hash_to_32_bytes_rejects_invalid_cid():
     """A short Qm-like string is not a valid sha2-256 IPFS CID."""
     with pytest.raises(ValueError):
