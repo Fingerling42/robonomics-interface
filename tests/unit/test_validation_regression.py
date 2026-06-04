@@ -47,7 +47,6 @@ def test_ipfs_qm_hash_to_32_bytes_rejects_invalid_cid():
         ipfs_qm_hash_to_32_bytes("Qm")
 
 
-@pytest.mark.xfail(reason="Crypto type validation should raise a clear ValueError")
 def test_liability_create_rejects_unknown_crypto_type(account):
     """Unknown crypto type integers should not surface as IndexError."""
     liability = Liability(account)
