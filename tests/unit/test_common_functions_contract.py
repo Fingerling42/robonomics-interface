@@ -60,13 +60,29 @@ def test_get_account_nonce_raises_on_missing_result(account, service_functions_m
         common.get_account_nonce("target-address")
 
 
-def test_transfer_tokens_uses_current_runtime_transfer_call(
+def test_transfer_tokens_uses_keep_alive_transfer_call(
     account, service_functions_mock
 ):
-    """Mark the transfer call name expected by the current Polkadot runtime."""
+    """The default transfer wrapper should keep the sender account alive."""
     common = _common(account, service_functions_mock)
 
     common.transfer_tokens("target-address", 123, nonce=4)
+
+    service_functions_mock.extrinsic.assert_called_once_with(
+        "Balances",
+        "transfer_keep_alive",
+        {"dest": {"Id": "target-address"}, "value": 123},
+        4,
+    )
+
+
+def test_transfer_tokens_allow_death_uses_explicit_allow_death_call(
+    account, service_functions_mock
+):
+    """Allow-death transfers should require an explicit wrapper method."""
+    common = _common(account, service_functions_mock)
+
+    common.transfer_tokens_allow_death("target-address", 123, nonce=4)
 
     service_functions_mock.extrinsic.assert_called_once_with(
         "Balances",

@@ -140,7 +140,7 @@ def test_live_payment_query_info_for_transfer_tokens_call(substrate):
     """The transfer_tokens wrapper call should remain fee-queryable live."""
     call = substrate.compose_call(
         "Balances",
-        "transfer_allow_death",
+        "transfer_keep_alive",
         {"dest": {"Id": ALICE_ADDRESS}, "value": 1},
     )
 

@@ -125,8 +125,9 @@ def test_datalog_window_size_constant_is_exported(metadata_fixture):
     assert window_size[0].get("constant_value") is not None
 
 
-def test_balances_transfer_allow_death_call_exists(metadata_fixture):
-    """Balances.transfer_allow_death is the current transfer call to wrap."""
+def test_balances_transfer_calls_exist(metadata_fixture):
+    """Both safe default and explicit allow-death transfer calls should exist."""
+    assert "transfer_keep_alive" in call_names(metadata_fixture, "Balances")
     assert "transfer_allow_death" in call_names(metadata_fixture, "Balances")
 
 
