@@ -7,3 +7,5 @@ __pycache__/
 docs/build
 docs/source/modules.rst
 docs/source/robonomicsinterface*
+.agents/
+tasks/
