@@ -8,4 +8,4 @@ docs/build
 docs/source/modules.rst
 docs/source/robonomicsinterface*
 .agents/
-tasks/
+AGENTS.md
